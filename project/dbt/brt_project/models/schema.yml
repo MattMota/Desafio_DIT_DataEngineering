@@ -1,0 +1,66 @@
+version: 2
+
+models:
+  - name: brt_data
+    description: "Raw real-time data of BRT vehicles."
+    columns:
+    - name: id
+      description: "Unique row identifier"
+      tests:
+      - unique
+      - not_null
+    - name: codigo
+      description: "Unique identifier for each BRT vehicle"
+    - name: placa
+      description: "BRT vehicle license plate"
+    - name: linha
+      description: "BRT bus line"
+    - name: latitude
+      description: "Global latitude at time of measurement"
+    - name: longitude
+      description: "Global longitude at time of measurement"
+    - name: dataHora
+      description: "Date and time of measurement"
+    - name: velocidade
+      description: "BRT vehicle speed at time of measurement"
+    - name: id_migracao_trajeto
+      description: "BRT bus line route id"
+    - name: sentido
+      description: "BRT bus line route direction"
+    - name: trajeto
+      description: "BRT bus line route name"
+    - name: hodometro
+      description: "BRT vehicle odometer value at time of measurement"
+    - name: direcao
+      description: "BRT vehicle direction in degrees (0 is due north)"
+    - name: ignicao
+      description: "Flag for if BRT vehicle is on (ignition started)"
+
+
+  - name: brt_vehicle_data
+    description: "Unique BRT vehicle data."
+    columns:
+    - name: codigo
+      description: "Unique identifier for each BRT vehicle"
+      tests:
+      - unique
+      - not_null
+    - name: placa
+      description: "BRT vehicle license plate"
+
+  - name: fact_vehicle_metrics
+    description: "Final table requested by the challenge."
+    columns:
+    - name: id
+      description: "Unique row identifier"
+      tests:
+      - unique
+      - not_null
+    - name: latitude
+      description: "Global latitude at time of measurement"
+    - name: longitude
+      description: "Global longitude at time of measurement"
+    - name: dataHora
+      description: "Date and time of measurement"
+    - name: velocidade
+      description: "BRT vehicle speed at time of measurement"

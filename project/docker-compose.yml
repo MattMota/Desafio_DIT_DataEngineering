@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  prefect:
+    build: .
+    container_name: prefect_agent
+    volumes:
+      - .:/app
+    environment:
+      PREFECT_LOGGING_LEVEL: INFO
+      PREFECT__BACKEND: server
+      PREFECT_API_URL: ""
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: brt
+    depends_on:
+      - postgres
+    entrypoint: ["/app/prefect_wait_for_postgres.sh"]
+    command: ["prefect", "agent", "local", "start"]
+    networks:
+      - local_network
+
+  postgres:
+    image: postgres:13
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: brt
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - local_network
+
+  dbt:
+    image: ghcr.io/dbt-labs/dbt-postgres:1.6.0
+    container_name: dbt_runner
+    volumes:
+      - ./dbt:/usr/app
+    working_dir: /usr/app
+    depends_on:
+      - postgres
+    networks:
+      - local_network
+    environment:
+      DBT_PROFILE_DIR: /usr/app
+
+networks:
+  local_network:
+
+volumes:
+  postgres_data:
